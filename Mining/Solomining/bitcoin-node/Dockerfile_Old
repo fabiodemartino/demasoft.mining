@@ -1,0 +1,59 @@
+# Use Ubuntu as the base image
+FROM ubuntu:latest
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Use root to ensure user creation works
+USER root
+
+# Set the UID and GID of the bitcoin user
+RUN groupadd -g 1500 bitcoin && \
+    useradd -m -u 1500 -g 1500 bitcoin
+
+# Install dependencies
+RUN apt update && apt install -y \
+    wget \
+    curl \
+    build-essential \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libjansson-dev \
+    automake \
+    autoconf \
+    git \
+    unzip \
+    libtool \
+    pkg-config \
+    yasm \
+    libncurses5-dev \
+    libz-dev \
+    libboost-all-dev \
+    libsodium-dev \
+    libgmp-dev && \
+    apt clean
+
+# Download and install Bitcoin Core
+RUN wget https://bitcoincore.org/bin/bitcoin-core-27.0/bitcoin-27.0-x86_64-linux-gnu.tar.gz && \
+    tar -xvf bitcoin-27.0-x86_64-linux-gnu.tar.gz && \
+    mv bitcoin-27.0/bin/* /usr/local/bin/ && \
+    rm -rf bitcoin-27.0*
+
+# Create the Bitcoin data directory and fix ownership
+RUN mkdir -p /home/bitcoin/.bitcoin && \
+    chown -R bitcoin:bitcoin /home/bitcoin
+
+# Expose Bitcoin node ports
+EXPOSE 8332 8333
+
+# Switch to bitcoin user
+USER bitcoin
+
+# Set home directory
+WORKDIR /home/bitcoin
+
+# Start the Bitcoin node
+ENTRYPOINT ["bitcoind"]
+
+# Add default arguments (can be overridden via `docker run`)
+CMD ["-datadir=/home/bitcoin/.bitcoin"]

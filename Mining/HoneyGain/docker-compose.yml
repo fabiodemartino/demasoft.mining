@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  honeygain:
+    image: honeygain/honeygain
+    container_name: honeygain
+    restart: unless-stopped
+    devices:
+      - /dev/cpu/0/msr
+      - /dev/cpu/1/msr
+      - /dev/cpu/2/msr
+      - /dev/cpu/3/msr
+      - /dev/cpu/4/msr
+      - /dev/cpu/5/msr
+      - /dev/cpu/6/msr
+      - /dev/cpu/7/msr
+      - /dev/dri:/dev/dri  # Mount device files for AMD GPU access
+    mem_limit: 30g
+    cpus: 8.0
+    command:
+      - -tou-accept
+      - -email
+      - "${HONEYGAIN_EMAIL}"
+      - -pass
+      - "${HONEYGAIN_PASSWORD}"
+      - -device
+      - "${HONEYGAIN_DEVICE}"
+    

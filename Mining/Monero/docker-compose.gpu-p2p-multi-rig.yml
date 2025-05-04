@@ -1,0 +1,101 @@
+version: "3.8"
+services:
+  xmrig:
+    image: xmrig-cuda-p2p-multi-rig
+    container_name: monero-miner-gpu-p2p-multi-rig
+    restart: unless-stopped
+    runtime: nvidia
+    privileged: true
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/cpu/12/msr
+      - /dev/cpu/13/msr
+      - /dev/cpu/14/msr
+      - /dev/cpu/15/msr
+      - /dev/cpu/16/msr
+      - /dev/cpu/17/msr
+      - /dev/cpu/18/msr
+      - /dev/cpu/19/msr
+      - /dev/cpu/20/msr
+      - /dev/dri:/dev/dri
+    volumes:
+      - ./monero-cuda-p2p-multi-rig/configs:/configs
+    entrypoint: /start-miners.sh
+    depends_on:
+      - p2pool
+    mem_limit: 60g
+    cpus: 12.0
+    networks:
+      - monero_network_p2p_multi_rig
+  
+  monerod:
+    image: monero-monerod-local
+    container_name: monerod
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:18081/json_rpc"]
+      interval: 30s
+      retries: 5
+    command: >
+      --zmq-pub tcp://0.0.0.0:18083
+      --out-peers 50
+      --in-peers 50
+      --disable-dns-checkpoints
+      --enable-dns-blocklist
+      --no-igd
+      --non-interactive
+      --rpc-bind-ip=0.0.0.0 
+      --confirm-external-bind
+      --block-sync-size 50
+      --sync-pruned-blocks
+      --fast-block-sync 1
+      --data-dir /home/monero/.bitmonero
+    deploy:
+          resources:
+            limits:
+              memory: 10g        
+              cpus: '4.0'
+            reservations:
+              memory: 4g
+              cpus: '2.0'
+    ports:
+      - "18080:18080"
+      - "18081:18081"
+      - "18083:18083"  # Added ZMQ port
+    volumes:
+      - /mnt/data/monero:/home/monero/.bitmonero
+    networks:
+      - monero_network_p2p_multi_rig
+  p2pool:
+    image: monero-p2p-local
+    container_name: p2pool
+    restart: unless-stopped
+    command: >
+      --host monerod
+      --rpc-port 18081
+      --zmq-port 18083
+      --wallet ${POOL_USER}
+      --stratum 0.0.0.0:3333
+      --p2p 0.0.0.0:37889
+      --addpeers "65.21.227.114:37889,node.sethforprivacy.com:37889"
+    volumes:
+      - p2pool_data:/data
+    networks:
+      - monero_network_p2p_multi_rig
+    environment:
+      - MONERO_RPC_HOST=10.0.0.135
+      - MONERO_RPC_PORT=18081
+      - MONERO_ZMQ_PORT=18083
+    ports:
+        - "3333:3333"
+        - "37889:37889"
+
+volumes:
+  monero_data:
+  p2pool_data:
+
+networks:
+  monero_network_p2p_multi_rig:
+    name: monero_network_p2p_multi_rig
+    driver: bridge

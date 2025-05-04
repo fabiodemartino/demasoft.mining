@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  xelis-miner:
+    image: xelis/miner:latest
+    container_name: xelis-miner
+    restart: unless-stopped
+    command: >
+      --miner-address ${XELIS_WALLET_ADDRESS}
+      --daemon-address ${XELIS_NODE_ADDRESS}
+    environment:
+      - RUST_LOG=info
+    cpus: "${XELIS_CPU_LIMIT}"
+    mem_limit: ${XELIS_MEMORY_LIMIT}

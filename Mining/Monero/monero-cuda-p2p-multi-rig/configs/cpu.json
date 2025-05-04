@@ -1,0 +1,16 @@
+{
+    "autosave": true,
+    "cpu": true,
+    "opencl": false,
+    "cuda": false,
+    "pools": [
+      {
+        "url": "stratum+tcp://p2pool:18081",
+        "user": "46xQckfXrPSfZScsNDhAcZPLVCE6iRHe8MNnGdTyD8pWgsxSBuEN3Xzhdumsbu9cdyhRoheobzL9WiutNWPiMeqd4RcnxWQ",
+        "pass": "x",
+        "keepalive": true,
+        "tls": false
+      }
+    ]
+  }
+  

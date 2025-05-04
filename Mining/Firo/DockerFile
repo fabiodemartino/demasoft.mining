@@ -1,0 +1,32 @@
+# Use official CUDA image with Ubuntu
+FROM nvidia/cuda:12.1.1-base-ubuntu22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV MINER_VERSION=3.44
+ENV MINER_VERSION_UNDERSCORE=3_44
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    unzip \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a working directory
+WORKDIR /gminer
+
+# Download and extract GMiner
+RUN wget -O gminer.tar.xz https://github.com/develsoftware/GMinerRelease/releases/download/${MINER_VERSION}/gminer_${MINER_VERSION_UNDERSCORE}_linux64.tar.xz \
+    && tar -xvf gminer.tar.xz \
+    && rm gminer.tar.xz
+
+# Verify contents
+RUN ls -lah /gminer
+
+# Dynamically find and set execute permissions on the miner binary
+RUN chmod +x $(find /gminer -type f -name "miner" -o -name "gminer")
+
+# Set up entry point for the miner
+ENTRYPOINT ["sh", "-c", "./miner --algo firopow --server $POOL_URL --user $WALLET_ADDRESS.$WORKER_NAME --pass x"]

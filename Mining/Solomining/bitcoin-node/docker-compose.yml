@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  bitcoin-node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BITCOIN_UID: 1500
+        BITCOIN_GID: 1500
+    image: custom-bitcoin-node:latest
+    container_name: bitcoin-node
+    restart: always
+    command: >
+      bitcoind
+      -conf=/home/bitcoin/.bitcoin/bitcoin.conf
+      -datadir=${BITCOIN_DATADIR}
+    volumes:
+      - ${BITCOIN_DATADIR}:/home/bitcoin/.bitcoin
+    env_file:
+      - .env
+    ports:
+      - "${BITCOIN_RPCPORT}:8332"
+      - "${BITCOIN_P2PPORT}:8333"
+    cpuset: "0"  # Restrict to CPU core 0
+    networks:
+      - bitcoin_network
+
+networks:
+  bitcoin_network:
+    driver: bridge

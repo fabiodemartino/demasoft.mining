@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  xmrig:
+    image: xmrig-cuda-builder  # Your custom image with CUDA support
+    container_name: monero-miner-gpu
+    restart: unless-stopped
+    runtime: nvidia  # For NVIDIA GPU access
+    privileged: true
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/cpu/0/msr
+      - /dev/cpu/1/msr
+      - /dev/cpu/2/msr
+      - /dev/cpu/3/msr
+      - /dev/cpu/4/msr
+      - /dev/cpu/5/msr
+      - /dev/cpu/6/msr
+      - /dev/cpu/7/msr
+      - /dev/cpu/8/msr
+      - /dev/cpu/9/msr
+      - /dev/cpu/10/msr
+      - /dev/cpu/11/msr
+      - /dev/cpu/12/msr
+      - /dev/cpu/13/msr
+      - /dev/cpu/15/msr
+      - /dev/dri:/dev/dri  # Mount device files for AMD GPU access
+    environment:
+      - POOL_URL=${POOL_URL}
+      - POOL_USER=${POOL_USER}
+      - POOL_PASS=${POOL_PASS}
+      - DONATE_LEVEL=${DONATE_LEVEL}
+      - NVIDIA_VISIBLE_DEVICES=all  # Ensure proper GPU visibility
+      - DOCKER_HOST=tcp://10.0.0.135:2375  # Existing Docker Host configuration
+    #command: xmrig --donate-level ${DONATE_LEVEL} --cuda -o ${POOL_URL} -u ${POOL_USER} -k --tls -p -p ${POOL_PASS} --huge-pages   # Correct command without /bin/bash
+    mem_limit: 60g
+    cpus: 16.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]

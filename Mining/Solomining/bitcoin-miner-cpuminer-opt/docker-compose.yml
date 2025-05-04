@@ -1,0 +1,19 @@
+services:
+  cpuminer:
+    build: .
+    container_name: cpuminer
+    restart: unless-stopped
+    command: >
+      -a sha256d
+      -o ${MINING_POOL}
+      -u ${BITCOIN_RPCUSER}
+      -p ${BITCOIN_RPCPASSWORD}
+      --coinbase-addr=${BITCOIN_WALLET}
+      -t 1
+    cpuset: "0"
+    networks:
+      - bitcoin_network
+
+networks:
+  bitcoin_network:
+    driver: bridge

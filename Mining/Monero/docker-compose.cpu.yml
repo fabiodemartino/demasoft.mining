@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  xmrig:
+    image: metal3d/xmrig
+    container_name: monero-miner-cpu
+    restart: unless-stopped
+    runtime: nvidia  # For NVIDIA GPU access
+    privileged: true
+    cap_add:
+      - SYS_RAWIO
+      - IPC_LOCK
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    devices:
+      - /dev/cpu/0/msr
+      - /dev/cpu/1/msr
+      - /dev/cpu/2/msr
+      - /dev/cpu/3/msr
+      - /dev/cpu/4/msr
+      - /dev/cpu/5/msr
+      - /dev/cpu/6/msr
+      - /dev/cpu/7/msr
+      - /dev/dri:/dev/dri  # Mount device files for AMD GPU access
+    environment:
+      - POOL_URL=${POOL_URL}
+      - POOL_USER=${POOL_USER}
+      - POOL_PASS=${POOL_PASS}
+      - DONATE_LEVEL=${DONATE_LEVEL}
+      - NVIDIA_VISIBLE_DEVICES=all
+    command: /bin/bash -c "xmrig -o ${POOL_URL} -u ${POOL_USER} -p ${POOL_PASS} -k --huge-pages"
+    mem_limit: 30g
+    cpus: 8.0
+

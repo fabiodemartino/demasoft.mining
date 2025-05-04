@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  rvn-miner:
+    build: .
+    container_name: kawpow-miner
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    command: >
+      ./kawpowminer
+      -P stratum+tcp://${RVN_WALLET_ADDRESS}@${RVN_POOL_HOST}:${RVN_POOL_PORT}

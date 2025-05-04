@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  
+  bitcoin-node:
+    image: ruimarinho/bitcoin-core
+    container_name: bitcoin-node
+    restart: always
+    command: >
+      bitcoind
+      -conf=/home/bitcoin/.bitcoin/bitcoin.conf
+      -datadir=/home/bitcoin/.bitcoin
+    volumes:
+      - '/mnt/data2/docker/bitcoin-data:/home/bitcoin/.bitcoin'
+    env_file:
+      - .env
+    ports:
+      - "${BITCOIN_RPCPORT}:8332"
+      - "${BITCOIN_P2PPORT}:8333"
+    cpuset: "0"  # Restrict to CPU core 0
+    networks:
+      - bitcoin_network
+
+networks:
+  bitcoin_network:
+    driver: bridge
+
+

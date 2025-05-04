@@ -1,0 +1,29 @@
+{
+    "cSpell.words": [
+        "deepseek",
+        "Dema",
+        "demasoftai",
+        "dotenv",
+        "firo",
+        "gminer",
+        "Hashrate",
+        "Kaspa",
+        "LASTEXITCODE",
+        "monero",
+        "monerod",
+        "nssm",
+        "ollama",
+        "ravecoin",
+        "secpol",
+        "xmrig",
+        "xrdp"
+    ],
+    "docker.environment": {
+        "DOCKER_HOST": "tcp://10.0.0.135:2375"
+    },
+    
+    "files.exclude": {
+        "**/__pycache__/": true,
+        "**/.pytest_cache": true
+    }
+}

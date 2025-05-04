@@ -1,0 +1,113 @@
+version: "3.8"
+services:
+  xmrig:
+    image: xmrig-cuda-p2p
+    container_name: monero-miner-gpu-p2p
+    restart: unless-stopped
+    runtime: nvidia
+    privileged: true
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/cpu/0/msr
+      - /dev/cpu/1/msr
+      - /dev/cpu/2/msr
+      - /dev/cpu/3/msr
+      - /dev/cpu/4/msr
+      - /dev/cpu/5/msr
+      - /dev/cpu/6/msr
+      - /dev/cpu/7/msr
+      - /dev/cpu/8/msr
+      - /dev/cpu/9/msr
+      - /dev/cpu/10/msr
+      - /dev/cpu/11/msr
+      - /dev/cpu/12/msr
+      - /dev/cpu/13/msr
+      - /dev/cpu/14/msr
+      - /dev/cpu/15/msr
+      - /dev/dri:/dev/dri
+    command: >
+      -o ${POOL_URL} -u ${POOL_USER} -p ${POOL_PASS} -t ${THREADS} --cuda --cpu-no-yield --keepalive --randomx-1gb-pages
+         
+    depends_on:
+      - p2pool
+    mem_limit: 60g
+    cpus: 16.0
+    networks:
+      - monero_network_p2p
+  
+  monerod:
+    image: monero-monerod-local
+    container_name: monerod
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:18081/json_rpc"]
+      interval: 30s
+      retries: 5
+    command: >
+      --zmq-pub tcp://0.0.0.0:18083
+      --out-peers 32
+      --in-peers 64
+      --add-priority-node=nodes.hashvault.pro:18080 
+      --disable-dns-checkpoints
+      --no-igd
+      --non-interactive
+      --rpc-bind-ip=0.0.0.0 
+      --confirm-external-bind
+      --block-sync-size 50
+      --sync-pruned-blocks
+      --fast-block-sync 1
+       --data-dir /home/monero/.bitmonero
+    deploy:
+          resources:
+            limits:
+              memory: 10g        
+              cpus: '4.0'
+            reservations:
+              memory: 4g
+              cpus: '2.0'
+    ports:
+      - "18080:18080"
+      - "18081:18081"
+      - "18083:18083"  # Added ZMQ port
+    volumes:
+      - /mnt/data/monero:/home/monero/.bitmonero
+    networks:
+      - monero_network_p2p
+
+  p2pool:
+    image: monero-p2p-local
+    container_name: p2pool
+    restart: unless-stopped
+    command: >
+      --host monerod
+      --rpc-port 18081
+      --zmq-port 18083
+      --wallet ${POOL_USER}
+      --stratum 0.0.0.0:3333
+      --p2p 0.0.0.0:37889
+      --addpeers "65.21.227.114:37889,node.sethforprivacy.com:37889"
+      --data-api /data-api
+      --mini
+      
+    volumes:
+      - p2pool_data:/data-api
+    networks:
+      - monero_network_p2p
+    environment:
+      - MONERO_RPC_HOST=10.0.0.135
+      - MONERO_RPC_PORT=18081
+      - MONERO_ZMQ_PORT=18083
+    ports:
+      - "3333:3333"
+      - "37889:37889"
+
+ 
+networks:
+  monero_network_p2p:
+    name: monero_network_p2p
+    driver: bridge
+ 
+volumes:
+  monero_data:
+  p2pool_data:
