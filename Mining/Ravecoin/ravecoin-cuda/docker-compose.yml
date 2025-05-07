@@ -2,11 +2,15 @@ version: "3.8"
 
 services:
   rvn-miner:
-    build: .
-    container_name: kawpow-miner
+    image: ravecoin-miner
+    container_name: ravecoin-miner
+    restart: unless-stopped
     runtime: nvidia
+    env_file:
+      - .env
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-    command: >
-      ./kawpowminer
-      -P stratum+tcp://${RVN_WALLET_ADDRESS}@${RVN_POOL_HOST}:${RVN_POOL_PORT}
+      NVIDIA_VISIBLE_DEVICES: all
+    entrypoint: >
+      sh -c "/kawpowminer/linux-ubuntu20-cuda11-1.2.4/kawpowminer -U -P ${RVN_POOL}/${RVN_WALLET_ADDRESS}.${HOSTNAME}"
+    expose:
+      - "3333"

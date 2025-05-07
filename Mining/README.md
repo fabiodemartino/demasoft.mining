@@ -1,5 +1,8 @@
-# demasoftai
-DemaSoft AI Experimentation
+# Demasoft.mining
+
+
+# Enable docker access for VS Code
+$env:DOCKER_HOST="tcp://10.0.0.135:2375"
 
 
 # Add bitcoin user to server
