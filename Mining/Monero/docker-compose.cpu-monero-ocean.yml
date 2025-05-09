@@ -17,24 +17,31 @@ services:
       - /dev/cpu/6/msr
       - /dev/cpu/7/msr
       - /dev/cpu/8/msr
+      - /dev/cpu/9/msr
+      - /dev/cpu/10/msr
+      - /dev/cpu/11/msr
+      - /dev/cpu/12/msr
+      - /dev/cpu/13/msr
+      - /dev/cpu/14/msr
+      - /dev/cpu/15/msr
       - /dev/dri:/dev/dri
     mem_limit: 60g
-    cpus: 8.0
+    cpus: 16.0
     dns:
       - 8.8.8.8
       - 1.1.1.1
     env_file:
       - .env.monero-ocean
     command: >
-      ./xmrig
-      --cpu
-      --no-opencl
-      --url ${POOL_URL}
-      --user ${POOL_USER}
-      --pass ${POOL_PASS}
-      --coin monero
-      --keepalive
-      --no-tls
+       ./xmrig 
+         -o ${POOL_URL} 
+         -u ${POOL_USER} 
+         -p ${POOL_PASS} 
+         -t ${THREADS} 
+         --cpu-no-yield
+         --keepalive 
+         --randomx-1gb-pages
+         
     networks:
       - monero_network_ocean
 
