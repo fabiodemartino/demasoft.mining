@@ -33,14 +33,14 @@ services:
     env_file:
       - .env.monero-ocean
     command: >
-       ./xmrig 
-         -o ${POOL_URL} 
-         -u ${POOL_USER} 
-         -p ${POOL_PASS} 
-         -t ${THREADS} 
-         --cpu-no-yield
-         --keepalive 
-         --randomx-1gb-pages
+      -a ${ALGO}
+      -o ${POOL_URL} 
+      -u ${POOL_USER} 
+      -p ${POOL_PASS} 
+      -t ${THREADS} 
+      --cpu-no-yield
+      --keepalive 
+      --randomx-1gb-pages
          
     networks:
       - monero_network_ocean

@@ -6,7 +6,7 @@
     "pools": [
       {
         "url": "stratum+tcp://p2pool:18081",
-        "user": "46xQckfXrPSfZScsNDhAcZPLVCE6iRHe8MNnGdTyD8pWgsxSBuEN3Xzhdumsbu9cdyhRoheobzL9WiutNWPiMeqd4RcnxWQ",
+        "user": "46QteQEGFhX8esA1sxBWCL33s97wDKKkVSWKJPrG3wpYeQ2ymmAgbhgNqNrQ5EJbRg9MggKGQcpM9hqfdViGzCSRVhZZ16w",
         "pass": "worker4",
         "keepalive": true,
         "tls": false

@@ -1,26 +1,35 @@
-# Use Alpine as the base image
-FROM alpine:latest
+FROM nvidia/cuda:12.2.0-devel-ubuntu20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install necessary packages
-RUN apk add --no-cache \
-    git \
-    build-base \
-    cmake \
-    curl \
-    bash \
-    libuv-dev \
-    openssl-dev \
-    hwloc-dev \
-    && git clone https://github.com/MoneroOcean/xmrig.git \
-    && mkdir -p xmrig/build \
-    && cd xmrig/build \
-    && cmake .. -DXMRIG_DEPS=scripts/deps \
-    && make -j$(nproc)
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    git build-essential cmake automake libtool autoconf \
+    libuv1-dev libssl-dev libhwloc-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /xmrig/build
+# -------- Build XMRig --------
+WORKDIR /root
+RUN git clone https://github.com/xmrig/xmrig.git
+WORKDIR /root/xmrig
+RUN mkdir build && cd build && \
+    cmake .. && \
+    make -j$(nproc)
 
-# Default command to start mining
-# CMD ["./xmrig", "-o", "gulf.moneroocean.stream:10128", "-u", "46xQckfXrPSfZScsNDhAcZPLVCE6iRHe8MNnGdTyD8pWgsxSBuEN3Xzhdumsbu9cdyhRoheobzL9WiutNWPiMeqd4RcnxWQ", "-k"]
- 
+# -------- Build CUDA plugin --------
+WORKDIR /root
+RUN git clone https://github.com/xmrig/xmrig-cuda.git
+WORKDIR /root/xmrig-cuda/build
+RUN cmake .. \
+    -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda \
+    -DCUDA_LIB=/usr/local/cuda/lib64/stubs/libcuda.so && \
+    make -j$(nproc)
+
+# -------- Copy plugin --------
+RUN mkdir -p /root/xmrig/build/plugins && \
+    cp /root/xmrig-cuda/build/libxmrig-cuda.so /root/xmrig/build/plugins/
+
+# -------- Default workdir and entry --------
+WORKDIR /root/xmrig/build
+ENV LD_LIBRARY_PATH="/root/xmrig/build/plugins:$LD_LIBRARY_PATH"
+ENTRYPOINT ["./xmrig"]
