@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  xmrig:
+    image: xmrig-monero-ocean
+    container_name: monero-miner-ocean
+    restart: unless-stopped
+    privileged: true
+    cap_add:
+      - SYS_RAWIO
+    devices:
+      - /dev/cpu/0/msr
+      - /dev/cpu/1/msr
+      - /dev/cpu/2/msr
+      - /dev/cpu/3/msr
+      - /dev/cpu/4/msr
+      - /dev/cpu/5/msr
+      - /dev/cpu/6/msr
+      - /dev/cpu/7/msr
+      - /dev/cpu/8/msr
+      - /dev/dri:/dev/dri
+    mem_limit: 60g
+    cpus: 8.0
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    env_file:
+      - .env.monero-ocean
+    command: >
+      ./xmrig
+      --cpu
+      --no-opencl
+      --url ${POOL_URL}
+      --user ${POOL_USER}
+      --pass ${POOL_PASS}
+      --coin monero
+      --keepalive
+      --no-tls
+    networks:
+      - monero_network_ocean
+
+networks:
+  monero_network_ocean:
+    name: monero_network_ocean
+    driver: bridge

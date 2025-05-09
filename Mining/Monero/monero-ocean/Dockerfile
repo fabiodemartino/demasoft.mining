@@ -1,11 +1,14 @@
 # Use Alpine as the base image
 FROM alpine:latest
 
+
 # Install necessary packages
 RUN apk add --no-cache \
     git \
     build-base \
     cmake \
+    curl \
+    bash \
     libuv-dev \
     openssl-dev \
     hwloc-dev \
@@ -19,4 +22,5 @@ RUN apk add --no-cache \
 WORKDIR /xmrig/build
 
 # Default command to start mining
-CMD ["./xmrig", "-o", "gulf.moneroocean.stream:10128", "-u", "YOUR_WALLET_ADDRESS", "-k", "--tls"]
+# CMD ["./xmrig", "-o", "gulf.moneroocean.stream:10128", "-u", "46xQckfXrPSfZScsNDhAcZPLVCE6iRHe8MNnGdTyD8pWgsxSBuEN3Xzhdumsbu9cdyhRoheobzL9WiutNWPiMeqd4RcnxWQ", "-k"]
+ 

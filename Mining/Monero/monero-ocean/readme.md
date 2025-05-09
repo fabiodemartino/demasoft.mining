@@ -1,0 +1,17 @@
+
+# Ports based on hashing speed
+80 (SSL 443): 100 diff (1-5 h/s)
+10001 (SSL 20001): 10000 diff (1 kH/s)
+10002 (SSL 20002): 20000 diff (2 kH/s)
+10004 (SSL 20004): 40000 diff (4 kH/s)
+10008 (SSL 20008): 80000 diff (8 kH/s)
+10016 (SSL 20016): 160000 diff (16 kH/s)
+10032 (SSL 20032): 320000 diff (32 kH/s)
+10064 (SSL 20064): 6400000 diff (64 kH/s)
+10128 (SSL 20128): 1280000 diff (128 kH/s)
+10256 (SSL 20256): 2560000 diff (256 kH/s)
+10512 (SSL 20512): 5120000 diff (512 kH/s)
+11024 (SSL 21024): 10240000 diff (1 MH/s)
+12048 (SSL 22048): 20480000 diff (2 MH/s)
+14096 (SSL 24096): 40960000 diff (4 MH/s)
+18192 (SSL 28192): 81920000 diff (8 MH/s)
