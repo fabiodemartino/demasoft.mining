@@ -15,4 +15,4 @@ try {
 Write-Host "`nTailing container logs for 'monero-miner-gpu-p2p-tari'..."
 Start-Sleep -Seconds 2
 docker logs -f monero-miner-gpu-p2p
-docker logs -f monerod
+docker logs -f monerod 

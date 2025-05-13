@@ -5,10 +5,10 @@ FROM monero-tari-local
 # RUN apt-get update && apt-get install -y bash curl
 
 # Copy your script to the container
-COPY start-tari-node.sh /root/start-tari-node.sh
+COPY start.sh /root/start.sh
 
 # Make sure the script is executable
-RUN chmod +x /root/start-tari-node.sh
+RUN chmod +x /root/start.sh
 
 # Set the entrypoint to your script
-ENTRYPOINT ["/root/start-tari-node.sh"]
+ENTRYPOINT ["/root/start.sh"]
