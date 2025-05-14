@@ -76,7 +76,7 @@ services:
       - monero_network_p2p
 
   p2pool:
-    image: monero-p2p-local
+    image: monero-p2p-local-nano
     container_name: p2pool
     restart: unless-stopped
     command: >
@@ -86,9 +86,11 @@ services:
       --wallet ${POOL_USER}
       --stratum 0.0.0.0:3333
       --p2p 0.0.0.0:37889
+      --sidechain-config nano_config.json
       --addpeers "65.21.227.114:37889,node.sethforprivacy.com:37889"
       --data-api /data-api
-      --mini
+      --loglevel 1 
+      --no-cache
       --merge-mine tari://127.0.0.1:18102 ${TARI_USER}
       
     volumes:

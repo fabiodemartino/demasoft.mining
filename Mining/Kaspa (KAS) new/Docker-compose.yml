@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  kaspa-miner:
+    image: lolminer-rig  # Use pre-built image
+    container_name: kaspa-miner
+    env_file:
+      - ./image/.env
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    runtime: nvidia
