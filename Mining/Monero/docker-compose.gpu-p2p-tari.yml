@@ -89,7 +89,6 @@ services:
       --sidechain-config nano_config.json
       --addpeers "65.21.227.114:37889,node.sethforprivacy.com:37889"
       --data-api /data-api
-      --loglevel 1 
       --no-cache
       --merge-mine tari://127.0.0.1:18102 ${TARI_USER}
       
